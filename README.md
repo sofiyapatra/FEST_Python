@@ -4,7 +4,7 @@
 
 ---
 
-## 📋 Overview
+## Overview
 
 FEST (Faculty Evaluation System) is a desktop application built with Python and Tkinter that manages student academic records, visualizations, and campus resources. Originally developed as a monolithic script, the codebase has been refactored into a modular, object-oriented architecture with theme support, new features, and improved maintainability.
 
@@ -18,7 +18,7 @@ FEST (Faculty Evaluation System) is a desktop application built with Python and 
 
 We created eight distinct modules, each with a single responsibility:
 
-[PLACEHOLDER: TABLE EXPLAINING DIFF MODULES]
+- [PLACEHOLDER: TABLE EXPLAINING DIFF MODULES]
 
 **Reasoning**: Separation of concerns allows independent development, testing, and debugging. Sofiya was also getting dizzy reading through the giant main.py file
 
@@ -52,8 +52,8 @@ Comprehensive analytics including:
 - Grade distribution (A-F)
 - Top 5 students with GPA rankings
 - Major distribution summary
-[PLACEHOLDER: SCREENSHOT STATISTICS DASHBOARD]
-[PLACEHOLDER: SCREENSHOT CODE SNIPPET IN OPERATIONS.PY AND DATA.PY]
+- [PLACEHOLDER: SCREENSHOT STATISTICS DASHBOARD]
+- [PLACEHOLDER: SCREENSHOT CODE SNIPPET IN OPERATIONS.PY AND DATA.PY]
 
 #### c. Student Organizations *(attributed to Dania)*
 Manages campus clubs and organizations with:
@@ -61,13 +61,13 @@ Manages campus clubs and organizations with:
 - Member counts and average GPAs
 - Statistics card overview
 - *(Currently static data; future update for dynamic management)*
-[PLACEHOLDER: SCREENSHOT STUDENT ORGS]
+- [PLACEHOLDER: SCREENSHOT STUDENT ORGS]
 
 ##### ci.  Student Organizations Integration with Student ID *(attributed to Jay)*
 
 Student ID cards now display organization affiliations based on the student's major:
-[PLACEHOLDER: SCREENSHOT TABLE CORRESPONDING MAJOR AND ORG]
-[PLACEHOLDER: SCREENSHOT STUDENT ID CARD WITH STUDENT ORG HIGHLIGHTED]
+- [PLACEHOLDER: SCREENSHOT TABLE CORRESPONDING MAJOR AND ORG]
+- [PLACEHOLDER: SCREENSHOT STUDENT ID CARD WITH STUDENT ORG HIGHLIGHTED]
 
 - *(Currently static data; future update for dynamic management)*
 
@@ -78,7 +78,7 @@ Find tutoring sessions by major:
 - Dropdown selection of available majors
 - Displays session details (days, times, subjects, locations)
 - Styled with the application's theme system
-[PLACEHOLDER: SCREENSHOT TUTORING FINDER]
+- [PLACEHOLDER: SCREENSHOT TUTORING FINDER]
 
 ---
 
@@ -115,7 +115,7 @@ Implement unit tests for each manager class to ensure reliability as the codebas
 ---
 
 ## Repository Structure: 
-[PLACEHOLDER: SCREENSHOT OF REPOSITORY STRUCTURE]
+- [PLACEHOLDER: SCREENSHOT OF REPOSITORY STRUCTURE]
 
 ---
 
@@ -124,5 +124,4 @@ Implement unit tests for each manager class to ensure reliability as the codebas
 - Python 3.10+
 - `matplotlib`, `seaborn`, `pandas`, `numpy`
 - Tkinter
-- 
 ---

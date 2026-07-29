@@ -1084,7 +1084,7 @@ class OperationsManager:
         from modules.ui import UIManager
         ui = UIManager(self.root, self.theme, None)
 
-        p
+        
         top = self._create_popup("Student Organizations", width=900, height=650)
         top.resizable(True, True)
 
@@ -1220,7 +1220,57 @@ class OperationsManager:
     Average Club GPA: 3.71""",
                 parent=top
             )
+def export_report():
+    club = selected_club()
 
+    if not club:
+        return
+
+    report = f"""CLUB REPORT
+==================================
+
+Club Name:
+{club[0]}
+
+Members:
+{club[1]}
+
+Average GPA:
+{club[2]}
+
+Faculty Advisor:
+Dr. Emily Carter
+
+President:
+Coming Soon
+
+Vice President:
+Coming Soon
+
+Treasurer:
+Coming Soon
+
+Meeting Time:
+Wednesday 6:00 PM
+
+Meeting Location:
+Engineering Building Room 204
+
+Mission:
+Promotes student leadership, collaboration,
+and professional development.
+"""
+
+    filename = club[0].replace(" ", "_") + "_Report.txt"
+
+    with open(filename, "w", encoding="utf-8") as file:
+        file.write(report)
+
+    messagebox.showinfo(
+        "Export Successful",
+        f"Report saved as\n\n{filename}",
+        parent=top
+    )
         # ── Buttons ──────────────────────────────────────────────────────────
         btns = tk.Frame(top, bg=self.theme.get_color('bg'))
         btns.pack(fill="x", padx=20, pady=18)
@@ -1229,6 +1279,8 @@ class OperationsManager:
                        color="#7C3AED", width=140, height=45).pack(side="left", padx=5)
         ui.make_button(btns, "📊 Statistics", statistics,
                        color="#15803D", width=150, height=45).pack(side="left", padx=5)
+ui.make_button(
+    btns, "📄 Export Report", export_report, width=170, height=45).pack(side="left", padx=5)
 
         # ── Footer Close ─────────────────────────────────────────────────────
         # Reuse your existing footer (or a simple close button)

@@ -394,7 +394,7 @@ class OperationsManager:
         self._show_statistics_dashboard()
 
     def _show_student_profile(self):
-        """Display student profile viewer - FIXED with flat buttons and proper navigation."""
+        """Display student profile viewer"""
         records = self.data.load_students()
         if not records:
             messagebox.showwarning("No Data", "No student records found.")
@@ -845,7 +845,7 @@ class OperationsManager:
                 fg=self.theme.get_color('accent'),
                 bg=self.theme.get_color('panel')).pack()
 
-        # Create scrollable container with proper scrolling behavior
+        # Create scrollable container
         container = tk.Frame(top, bg=self.theme.get_color('bg'))
         container.pack(fill="both", expand=True, padx=20, pady=10)
 
@@ -908,7 +908,7 @@ class OperationsManager:
             ("⭐ Student Avg GPA", f"{stats['avg_student_gpa']:.2f}"),
         ]
 
-        # Create grid with fixed height to prevent stretching, its ugly
+        # Create grid with fixed height to prevent stretching
         for i, (label, value) in enumerate(metrics):
             card = tk.Frame(overview_frame, bg=self.theme.get_color('card'),
                            relief="flat", bd=1)
@@ -1221,28 +1221,20 @@ class OperationsManager:
             club = selected_club()
             if not club:
                 return
-            messagebox.showinfo(
-                club[0],
-                f"""Club Name: {club[0]}
-    Members: {club[1]}
-    Average GPA: {club[2]}
+            messagebox.showinfo(club[0], f"""Club Name: {club[0]}
+        Members: {club[1]}
+        Average GPA: {club[2]}
 
-    Faculty Advisor: Coming Soon
-    President: Coming Soon
-    Vice President: Coming Soon
-    Treasurer: Coming Soon""",
-                parent=top
-            )
+        Faculty Advisor: Coming Soon
+        President: Coming Soon
+        Vice President: Coming Soon
+        Treasurer: Coming Soon""", parent=top)
 
         def statistics():
-            messagebox.showinfo(
-                "Club Statistics",
-                """Total Clubs: 5
-    Largest Club: ACM Programming Club
-    Highest GPA: Women in STEM (3.91)
-    Average Club GPA: 3.71""",
-                parent=top
-            )
+            messagebox.showinfo("Club Statistics", """Total Clubs: 5
+Largest Club: ACM Programming Club
+Highest GPA: Women in STEM (3.91)
+Average Club GPA: 3.71""", parent=top)
 
         # ── Buttons ──────────────────────────────────────────────────────────
         btns = tk.Frame(top, bg=self.theme.get_color('bg'))

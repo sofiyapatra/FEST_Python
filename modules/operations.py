@@ -1286,8 +1286,8 @@ and professional development.
                        color="#7C3AED", width=140, height=45).pack(side="left", padx=5)
         ui.make_button(btns, "📊 Statistics", statistics,
                        color="#15803D", width=150, height=45).pack(side="left", padx=5)
-ui.make_button(
-    btns, "📄 Export Report", export_report, width=170, height=45).pack(side="left", padx=5)
+        ui.make_button(btns, "📄 Export Report", export_report,
+                       width=170, height=45).pack(side="left", padx=5)
 
         # ── Footer Close ─────────────────────────────────────────────────────
         # Reuse your existing footer (or a simple close button)

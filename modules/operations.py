@@ -703,13 +703,6 @@ class OperationsManager:
             first = student_dict[sid][0]
             recs = student_dict[sid]
 
-            club_lookup = {
-    first["student_id"]: [
-        "ACM Programming Club",
-        "IEEE"
-    ]
-}
-
 clubs = club_lookup.get(first["student_id"], [])
             # Gold header
             hdr = tk.Frame(card_body, bg=VU_GOLD, height=58)
@@ -756,24 +749,13 @@ clubs = club_lookup.get(first["student_id"], [])
                     fg=VU_GOLD, bg=VU_BLACK).pack(anchor="w")
             tk.Label(right, text=f"Enrolled courses: {len(recs)}",
                     font=("Segoe UI", 8), fg="#7a7a7a", bg=VU_BLACK).pack(anchor="w", pady=(6, 0))
-tk.Frame(right, bg=VU_GOLD, height=1).pack(fill="x", pady=(8, 6))
-
-tk.Label(
-    right,
-    text="STUDENT ORGANIZATIONS",
-    font=("Segoe UI", 7, "bold"),
-    fg="#777777",
-    bg=VU_BLACK
-).pack(anchor="w")
+            tk.Frame(right, bg=VU_GOLD, height=1).pack(fill="x", pady=(8, 6))
+            tk.Label(right, text="STUDENT ORGANIZATIONS",
+                    font=("Segoe UI", 7, "bold"), fg="#777777", bg=VU_BLACK).pack(anchor="w")
 
 for club in clubs:
-    tk.Label(
-        right,
-        text=f"• {club}",
-        font=("Segoe UI", 8),
-        fg="white",
-        bg=VU_BLACK
-    ).pack(anchor="w")
+    tk.Label(right, text=f"• {club}",
+        font=("Segoe UI", 8),fg="white",bg=VU_BLACK).pack(anchor="w")
             # Barcode
             make_barcode(card_body, first["student_id"]).pack(fill="x")
 

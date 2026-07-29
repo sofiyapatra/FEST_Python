@@ -585,7 +585,7 @@ class OperationsManager:
         show_student(0)
 
     def _show_student_id_card(self):
-        """Display student ID card - FIXED with default avatar and flat buttons."""
+        """Display student ID card - with student organizations added."""
         records = self.data.load_students()
         if not records:
             messagebox.showwarning("No Data", "No student records found.")
@@ -703,7 +703,6 @@ class OperationsManager:
             first = student_dict[sid][0]
             recs = student_dict[sid]
 
-clubs = club_lookup.get(first["student_id"], [])
             # Gold header
             hdr = tk.Frame(card_body, bg=VU_GOLD, height=58)
             hdr.pack(fill="x")
@@ -733,9 +732,11 @@ clubs = club_lookup.get(first["student_id"], [])
             # Divider
             tk.Frame(body, bg=VU_GOLD, width=2).pack(side="left", fill="y", padx=(0, 12))
 
-            # Right: info
+            # Right: info with organizations
             right = tk.Frame(body, bg=VU_BLACK)
             right.pack(side="left", fill="both", expand=True)
+
+            # Name, major, university
             tk.Label(right, text=first["name"], font=("Georgia", 16, "bold"),
                     fg="white", bg=VU_BLACK, wraplength=250, justify="left").pack(anchor="w")
             tk.Label(right, text=first["major"], font=("Segoe UI", 11),
@@ -743,23 +744,39 @@ clubs = club_lookup.get(first["student_id"], [])
             tk.Label(right, text="Vanderbilt University · Nashville, TN",
                     font=("Segoe UI", 8), fg="#7a7a7a", bg=VU_BLACK).pack(anchor="w", pady=(2, 6))
             tk.Frame(right, bg=VU_GOLD, height=1).pack(fill="x", pady=(0, 6))
+
+            # ── STUDENT ORGANIZATIONS (NEW) ──────────────────────────────────
+            major = first["major"]
+            if major == "Computer Science":
+                clubs = ["ACM Programming Club", "Cybersecurity Club"]
+            elif major == "Mechanical Engineering":
+                clubs = ["IEEE", "Robotics Club"]
+            elif major == "Business":
+                clubs = ["Entrepreneurship Club", "Finance Society"]
+            elif major == "Electrical Engineering":
+                clubs = ["IEEE", "Robotics Club"]
+            else:
+                clubs = ["Student Government Association"]
+
+            tk.Label(right, text="STUDENT ORGANIZATIONS",
+                     font=("Segoe UI", 7, "bold"), fg="#777777", bg=VU_BLACK).pack(anchor="w")
+            club_text = ", ".join(clubs)
+            tk.Label(right, text=club_text,
+                     font=("Segoe UI", 8), fg="white", bg=VU_BLACK,
+                     wraplength=240, justify="left").pack(anchor="w")
+
+            # ── STUDENT ID ──────────────────────────────────────────────────
             tk.Label(right, text="STUDENT ID", font=("Segoe UI", 7, "bold"),
                     fg="#8a8a8a", bg=VU_BLACK).pack(anchor="w")
             tk.Label(right, text=first["student_id"], font=("Courier New", 15, "bold"),
                     fg=VU_GOLD, bg=VU_BLACK).pack(anchor="w")
             tk.Label(right, text=f"Enrolled courses: {len(recs)}",
                     font=("Segoe UI", 8), fg="#7a7a7a", bg=VU_BLACK).pack(anchor="w", pady=(6, 0))
-            tk.Frame(right, bg=VU_GOLD, height=1).pack(fill="x", pady=(8, 6))
-            tk.Label(right, text="STUDENT ORGANIZATIONS",
-                    font=("Segoe UI", 7, "bold"), fg="#777777", bg=VU_BLACK).pack(anchor="w")
 
-for club in clubs:
-    tk.Label(right, text=f"• {club}",
-        font=("Segoe UI", 8),fg="white",bg=VU_BLACK).pack(anchor="w")
             # Barcode
             make_barcode(card_body, first["student_id"]).pack(fill="x")
 
-        # Navigation - FIXED with flat buttons
+        # Navigation - flat buttons
         tk.Frame(top, bg=self.theme.get_color('border'), height=1).pack(fill="x")
         nav = tk.Frame(top, bg=self.theme.get_color('panel'))
         nav.pack(fill="x")
@@ -806,7 +823,7 @@ for club in clubs:
         show_card(0)
 
     def _show_statistics_dashboard(self):
-        """Display the statistics dashboard - FIXED with proper scrolling."""
+        """Display the statistics dashboard"""
         stats = self.data.get_student_statistics()
         if not stats:
             messagebox.showwarning("No Data", "No student records found.")
@@ -861,7 +878,7 @@ for club in clubs:
         # Create window in canvas
         canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
 
-        # Pack canvas and scrollbar
+        # canvas and scrollbar
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
@@ -879,7 +896,6 @@ for club in clubs:
 
         top.protocol("WM_DELETE_WINDOW", on_close)
 
-        # Overview cards - FIXED: no vertical stretching
         overview_frame = tk.Frame(scroll_frame, bg=self.theme.get_color('bg'))
         overview_frame.pack(fill="x", pady=10)
 
@@ -892,7 +908,7 @@ for club in clubs:
             ("⭐ Student Avg GPA", f"{stats['avg_student_gpa']:.2f}"),
         ]
 
-        # Create grid with fixed height to prevent stretching
+        # Create grid with fixed height to prevent stretching, its ugly
         for i, (label, value) in enumerate(metrics):
             card = tk.Frame(overview_frame, bg=self.theme.get_color('card'),
                            relief="flat", bd=1)
@@ -1087,16 +1103,16 @@ for club in clubs:
                           width=200, height=45).pack(side="left", padx=8)
 
     def student_organizations(self):
-    
+        """Display the Student Organizations feature."""
         from modules.ui import UIManager
         ui = UIManager(self.root, self.theme, None)
 
-        
+        # Create popup
         top = self._create_popup("Student Organizations", width=900, height=650)
         top.resizable(True, True)
 
-        
-        accent_color = "#7C3AED"  
+        # Color for accent
+        accent_color = self.theme.get_color('accent')
 
         # ── Header ──────────────────────────────────────────────────────────────
         tk.Frame(top, bg=accent_color, height=5).pack(fill="x")
@@ -1227,57 +1243,7 @@ for club in clubs:
     Average Club GPA: 3.71""",
                 parent=top
             )
-      def export_report():
-           club = selected_club()
 
-            if not club:
-                 return
-
-    report = f"""CLUB REPORT
-==================================
-
-Club Name:
-{club[0]}
-
-Members:
-{club[1]}
-
-Average GPA:
-{club[2]}
-
-Faculty Advisor:
-Dr. Emily Carter
-
-President:
-Coming Soon
-
-Vice President:
-Coming Soon
-
-Treasurer:
-Coming Soon
-
-Meeting Time:
-Wednesday 6:00 PM
-
-Meeting Location:
-Engineering Building Room 204
-
-Mission:
-Promotes student leadership, collaboration,
-and professional development.
-"""
-
-    filename = club[0].replace(" ", "_") + "_Report.txt"
-
-    with open(filename, "w", encoding="utf-8") as file:
-        file.write(report)
-
-    messagebox.showinfo(
-        "Export Successful",
-        f"Report saved as\n\n{filename}",
-        parent=top
-    )
         # ── Buttons ──────────────────────────────────────────────────────────
         btns = tk.Frame(top, bg=self.theme.get_color('bg'))
         btns.pack(fill="x", padx=20, pady=18)
@@ -1286,8 +1252,6 @@ and professional development.
                        color="#7C3AED", width=140, height=45).pack(side="left", padx=5)
         ui.make_button(btns, "📊 Statistics", statistics,
                        color="#15803D", width=150, height=45).pack(side="left", padx=5)
-        ui.make_button(btns, "📄 Export Report", export_report,
-                       width=170, height=45).pack(side="left", padx=5)
 
         # ── Footer Close ─────────────────────────────────────────────────────
         # Reuse your existing footer (or a simple close button)

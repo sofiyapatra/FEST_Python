@@ -25,25 +25,30 @@ class UIManager:
         # UI state
         self.current_screen = None
 
-        # Option labels
         self.OPTION_LABELS = [
             "Add Student", "Edit Student", "Delete Record",
             "GPA Formula", "Swarm Plot", "Major Count Plot",
             "Grade Pie Chart", "Student Profile", "Student ID Card",
-            "Queries", "Dean's List", "Statistics Dashboard"
+            "Queries", "Dean's List", "Statistics Dashboard",
+            "Student Organizations"
         ]
 
         self.OPTION_COLORS = [
             "#C49B5A", "#A8843E", "#8C3A2E", "#B8860B", "#6E1E22",
             "#5C4A2A", "#9C6B30", "#556B2F", "#7C2D12", "#3E3226",
-            "#C49B5A", "#2A6B4A"
+            "#C49B5A", "#2A6B4A",
+            "#42112C"
         ]
 
     def clear_screen(self):
-        """Clear all widgets from the root window."""
+        """Clear all widgets from the root window and unbind global events."""
         for w in self.root.winfo_children():
             w.destroy()
         self.root.unbind("<Key>")
+        # Unbind global scroll events that might have been set by show_menu
+        self.root.unbind_all("<MouseWheel>")
+        self.root.unbind_all("<Up>")
+        self.root.unbind_all("<Down>")
         self.current_screen = None
 
     def make_label(self, parent, text, size=11, bold=False, color=None, **kw):
@@ -278,11 +283,11 @@ class UIManager:
         self._create_footer()
 
     def show_menu(self):
-        """Display the main menu."""
+        """Display the main menu with a scrollable grid of buttons, centered."""
         self.clear_screen()
         self.root.title(f"FEST — Menu ({self.auth.current_user})")
 
-        # Header
+        # ── Fixed Header ───────────────────────────────────────────────────────
         hdr = tk.Frame(self.root, bg=self.theme.get_color('panel'))
         hdr.pack(fill="x")
         tk.Frame(hdr, bg=self.theme.get_color('accent'), height=2).pack(fill="x")
@@ -302,34 +307,79 @@ class UIManager:
         self.make_button(header_row, "Logout", self.do_logout,
                         width=120, height=35).pack(side="right")
 
-        # Body
-        body = tk.Frame(self.root, bg=self.theme.get_color('bg'))
-        body.pack(expand=True, fill="both", padx=30, pady=20)
+        # ── Scrollable Body ───────────────────────────────────────────────────
+        body_container = tk.Frame(self.root, bg=self.theme.get_color('bg'))
+        body_container.pack(expand=True, fill="both", padx=30, pady=(10, 0))
 
-        self.make_label(body, "Main Menu", 18, bold=True,
+        # Title (fixed)
+        title_frame = tk.Frame(body_container, bg=self.theme.get_color('bg'))
+        title_frame.pack(fill="x")
+        self.make_label(title_frame, "Main Menu", 18, bold=True,
                        color=self.theme.get_color('accent')).pack()
-        self.make_ornamental_divider(body, width=260).pack(pady=10)
-        self.make_label(body, "Click a button or press 0–9, D for Dean's List, S for Statistics",
-                       11, color=self.theme.get_color('text_secondary')).pack(pady=10)
+        self.make_ornamental_divider(title_frame, width=260).pack(pady=10)
+        self.make_label(title_frame,
+                       "Click a button or press 0–9, D for Dean's List, S for Statistics, O for Organizations",
+                       11, color=self.theme.get_color('text_secondary')).pack(pady=(0, 10))
 
-        grid = tk.Frame(body, bg=self.theme.get_color('bg'))
-        grid.pack(pady=10)
+        # Scrollable area
+        scroll_frame = tk.Frame(body_container, bg=self.theme.get_color('bg'))
+        scroll_frame.pack(expand=True, fill="both")
 
-        # Restore the border + inner frame styling for menu buttons
+        canvas = tk.Canvas(scroll_frame, bg=self.theme.get_color('bg'), highlightthickness=0)
+        scrollbar = ttk.Scrollbar(scroll_frame, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        # Inner frame to hold the grid; will be expanded to fill canvas width
+        inner_frame = tk.Frame(canvas, bg=self.theme.get_color('bg'))
+        canvas_window = canvas.create_window((0, 0), window=inner_frame, anchor="nw")
+
+        # Update scroll region when inner frame changes size
+        def configure_scroll_region(event):
+            canvas.configure(scrollregion=canvas.bbox("all"))
+        inner_frame.bind("<Configure>", configure_scroll_region)
+
+        # Update inner frame width when canvas resizes to allow centering
+        def on_canvas_resize(event):
+            canvas.itemconfig(canvas_window, width=event.width)
+        canvas.bind("<Configure>", on_canvas_resize)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        # Mousewheel and arrow keys scrolling
+        def on_mousewheel(event):
+            canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        def on_arrow_keys(event):
+            if event.keysym == 'Up':
+                canvas.yview_scroll(-1, "units")
+            elif event.keysym == 'Down':
+                canvas.yview_scroll(1, "units")
+        canvas.bind_all("<MouseWheel>", on_mousewheel)
+        canvas.bind_all("<Up>", on_arrow_keys)
+        canvas.bind_all("<Down>", on_arrow_keys)
+
+        # ── Grid of buttons (centered) ──────────────────────────────────────
+        grid_frame = tk.Frame(inner_frame, bg=self.theme.get_color('bg'))
+        grid_frame.pack(pady=10, anchor="center")  # center horizontally within inner_frame
+
         for i in range(len(self.OPTION_LABELS)):
             r, c = divmod(i, 2)
             color = self.OPTION_COLORS[i % len(self.OPTION_COLORS)]
-            tag = str(i) if i < 10 else ("D" if i == 10 else "S")
+            if i < 10:
+                tag = str(i)
+            elif i == 10:
+                tag = "D"
+            elif i == 11:
+                tag = "S"
+            else:  # i == 12
+                tag = "O"
 
-            # Colored border frame
-            border = tk.Frame(grid, bg=color, padx=2, pady=2)
+            border = tk.Frame(grid_frame, bg=color, padx=2, pady=2)
             border.grid(row=r, column=c, padx=10, pady=8)
 
-            # Inner frame with card background
             inner = tk.Frame(border, bg=self.theme.get_color('card'))
             inner.pack()
 
-            # Button uses the card color, so the text uses the border color
             self.make_button(
                 inner,
                 text=f"  [{tag}]  {self.OPTION_LABELS[i]}  ",
@@ -338,6 +388,7 @@ class UIManager:
                 width=290, height=60
             ).pack()
 
+        # ── Keyboard shortcuts ────────────────────────────────────────────────
         def on_key(e):
             ch = e.char
             if ch in "0123456789":
@@ -346,9 +397,11 @@ class UIManager:
                 self._handle_option(10)
             elif ch.lower() == "s":
                 self._handle_option(11)
-
+            elif ch.lower() == "o":
+                self._handle_option(12)
         self.root.bind("<Key>", on_key)
 
+        # ── Footer ────────────────────────────────────────────────────────────
         self._create_footer(show_close=False)
 
     def _handle_option(self, n):
@@ -369,6 +422,7 @@ class UIManager:
             9: ops.queries,
             10: ops.deans_list,
             11: ops.statistics_dashboard,
+            12: ops.student_organizations
         }
         dispatch.get(n, lambda: None)()
 

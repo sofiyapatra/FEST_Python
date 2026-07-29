@@ -1078,3 +1078,173 @@ class OperationsManager:
         for text, cmd in button_list:
             ui.make_button(btn_frame, text, cmd,
                           width=200, height=45).pack(side="left", padx=8)
+
+    def student_organizations(self):
+        """Display the Student Organizations feature."""
+        from modules.ui import UIManager
+        ui = UIManager(self.root, self.theme, None)
+
+        # Create popup
+        top = self._create_popup("Student Organizations", width=900, height=650)
+        top.resizable(True, True)
+
+        # Color for accent
+        accent_color = "#7C3AED"  # or self.theme.get_color('accent') if you prefer
+
+        # ── Header ──────────────────────────────────────────────────────────────
+        tk.Frame(top, bg=accent_color, height=5).pack(fill="x")
+        hdr = tk.Frame(top, bg=self.theme.get_color('panel'))
+        hdr.pack(fill="x")
+        tk.Frame(hdr, bg=accent_color, height=2).pack(fill="x")
+
+        ui.make_label(hdr, "Student Organizations", 16, bold=True,
+                      color=self.theme.get_color('text')).pack(anchor="w", padx=18, pady=(12, 2))
+        ui.make_label(hdr, "Manage campus clubs and organizations", 10,
+                      color=self.theme.get_color('text_secondary')).pack(anchor="w", padx=18, pady=(0, 12))
+
+        # ── Statistics Cards ──────────────────────────────────────────────────
+        stats = tk.Frame(top, bg=self.theme.get_color('bg'))
+        stats.pack(fill="x", padx=20, pady=(10, 15))
+
+        cards = [
+            ("Total Clubs", "5"),
+            ("Total Members", "89"),
+            ("Average GPA", "3.71")
+        ]
+
+        for title, value in cards:
+            card = tk.Frame(stats, bg=self.theme.get_color('card'), padx=20, pady=15)
+            card.pack(side="left", padx=10, fill="x", expand=True)
+
+            tk.Label(card, text=title, font=("Segoe UI", 10),
+                     fg=self.theme.get_color('text_secondary'),
+                     bg=self.theme.get_color('card')).pack()
+            tk.Label(card, text=value, font=("Segoe UI", 22, "bold"),
+                     fg=self.theme.get_color('accent'),
+                     bg=self.theme.get_color('card')).pack()
+
+        # ── Search Bar ────────────────────────────────────────────────────────
+        search_frame = tk.Frame(top, bg=self.theme.get_color('bg'))
+        search_frame.pack(fill="x", padx=20)
+
+        ui.make_label(search_frame, "Search Clubs", 11, bold=True,
+                      color=self.theme.get_color('text')).pack(anchor="w")
+
+        search = tk.Entry(search_frame, font=("Segoe UI", 11),
+                          bg=self.theme.get_color('card'),
+                          fg=self.theme.get_color('text'),
+                          insertbackground=self.theme.get_color('highlight'),
+                          relief="flat")
+        search.pack(fill="x", pady=(5, 10))
+
+        # ── Club Table ────────────────────────────────────────────────────────
+        columns = ("club", "members", "gpa")
+        style = ttk.Style()
+        style.theme_use("clam")
+        style.configure("Org.Treeview",
+                        background=self.theme.get_color('card'),
+                        foreground=self.theme.get_color('text'),
+                        fieldbackground=self.theme.get_color('card'),
+                        rowheight=30)
+        style.configure("Org.Treeview.Heading",
+                        background=self.theme.get_color('panel'),
+                        foreground=self.theme.get_color('accent'),
+                        font=('Segoe UI', 10, 'bold'))
+        style.map("Org.Treeview",
+                  background=[("selected", self.theme.get_color('accent'))],
+                  foreground=[("selected", 'white')])
+
+        tree = ttk.Treeview(top, columns=columns, show="headings",
+                            style="Org.Treeview", height=12)
+        tree.heading("club", text="Club Name")
+        tree.heading("members", text="Members")
+        tree.heading("gpa", text="Average GPA")
+        tree.column("club", width=500)
+        tree.column("members", width=120, anchor="center")
+        tree.column("gpa", width=150, anchor="center")
+
+        clubs_data = [
+            ("ACM Programming Club", 24, "3.74"),
+            ("Cybersecurity Club", 18, "3.69"),
+            ("IEEE", 20, "3.58"),
+            ("Robotics Club", 15, "3.82"),
+            ("Women in STEM", 12, "3.91"),
+        ]
+
+        for club in clubs_data:
+            tree.insert("", "end", values=club)
+
+        tree.pack(fill="both", expand=True, padx=20)
+
+        # ── Search Function ──────────────────────────────────────────────────
+        def filter_clubs(event=None):
+            text = search.get().lower()
+            tree.delete(*tree.get_children())
+            for club in clubs_data:
+                if text in club[0].lower():
+                    tree.insert("", "end", values=club)
+
+        search.bind("<KeyRelease>", filter_clubs)
+
+        # ── Button Functions ─────────────────────────────────────────────────
+        def selected_club():
+            selected = tree.focus()
+            if not selected:
+                messagebox.showwarning("No Selection", "Please select a club.", parent=top)
+                return None
+            return tree.item(selected)["values"]
+
+        def view_members():
+            club = selected_club()
+            if not club:
+                return
+            messagebox.showinfo(
+                club[0],
+                f"""Club Name: {club[0]}
+    Members: {club[1]}
+    Average GPA: {club[2]}
+
+    Faculty Advisor: Coming Soon
+    President: Coming Soon
+    Vice President: Coming Soon
+    Treasurer: Coming Soon""",
+                parent=top
+            )
+
+        def add_club():
+            messagebox.showinfo("Coming Soon", "This feature will be added in a future update.", parent=top)
+
+        def edit_club():
+            messagebox.showinfo("Coming Soon", "This feature will be added in a future update.", parent=top)
+
+        def delete_club():
+            messagebox.showinfo("Coming Soon", "This feature will be added in a future update.", parent=top)
+
+        def statistics():
+            messagebox.showinfo(
+                "Club Statistics",
+                """Total Clubs: 5
+    Largest Club: ACM Programming Club
+    Highest GPA: Women in STEM (3.91)
+    Average Club GPA: 3.71""",
+                parent=top
+            )
+
+        # ── Buttons ──────────────────────────────────────────────────────────
+        btns = tk.Frame(top, bg=self.theme.get_color('bg'))
+        btns.pack(fill="x", padx=20, pady=18)
+
+        ui.make_button(btns, "👥 Members", view_members,
+                       color="#7C3AED", width=140, height=45).pack(side="left", padx=5)
+        ui.make_button(btns, "📊 Statistics", statistics,
+                       color="#15803D", width=150, height=45).pack(side="left", padx=5)
+
+        # ── Footer Close ─────────────────────────────────────────────────────
+        # Reuse your existing footer (or a simple close button)
+        footer = tk.Frame(top, bg=self.theme.get_color('panel'))
+        footer.pack(fill="x", side="bottom")
+        tk.Frame(footer, bg=self.theme.get_color('border'), height=1).pack(fill="x")
+        btn_frame = tk.Frame(footer, bg=self.theme.get_color('panel'))
+        btn_frame.pack(pady=8)
+        ui.make_button(btn_frame, "Close", top.destroy,
+                       width=120, height=35).pack()

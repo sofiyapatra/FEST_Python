@@ -1227,11 +1227,11 @@ for club in clubs:
     Average Club GPA: 3.71""",
                 parent=top
             )
-def export_report():
-    club = selected_club()
+      def export_report():
+           club = selected_club()
 
-    if not club:
-        return
+            if not club:
+                 return
 
     report = f"""CLUB REPORT
 ==================================

@@ -1211,15 +1211,6 @@ class OperationsManager:
                 parent=top
             )
 
-        def add_club():
-            messagebox.showinfo("Coming Soon", "This feature will be added in a future update.", parent=top)
-
-        def edit_club():
-            messagebox.showinfo("Coming Soon", "This feature will be added in a future update.", parent=top)
-
-        def delete_club():
-            messagebox.showinfo("Coming Soon", "This feature will be added in a future update.", parent=top)
-
         def statistics():
             messagebox.showinfo(
                 "Club Statistics",
@@ -1247,4 +1238,121 @@ class OperationsManager:
         btn_frame = tk.Frame(footer, bg=self.theme.get_color('panel'))
         btn_frame.pack(pady=8)
         ui.make_button(btn_frame, "Close", top.destroy,
+                       width=120, height=35).pack()
+
+    def tutoring(self):
+        """Display the Tutoring Finder window."""
+        from modules.ui import UIManager
+        ui = UIManager(self.root, self.theme, None)
+
+        # Tutoring data (moved inside the method)
+        major_tutoring = {
+            "Biology": [
+                "Monday | 8:00 PM - 9:00 PM\n"
+                "Subjects: CHEM/BSCI/MATH\n"
+                "Location: Commons Center, Fireside Lounge",
+                "Tuesday | 7:00 PM - 8:00 PM\n"
+                "Subjects: CHEM/BSCI/PHYS\n"
+                "Location: Commons Center, Fireside Lounge"
+            ],
+            "Chemistry": [
+                "Monday | 8:00 PM - 9:00 PM\n"
+                "Subjects: CHEM/BSCI/MATH\n"
+                "Location: Commons Center, Fireside Lounge",
+                "Tuesday | 7:00 PM - 8:00 PM\n"
+                "Subjects: CHEM/BSCI/PHYS\n"
+                "Location: Commons Center, Fireside Lounge",
+                "CHEM 1602 Roundtable\n"
+                "Monday | 7:00 PM - 8:00 PM\n"
+                "Location: Commons Center, Fireside Lounge",
+                "CHEM 1602 Roundtable\n"
+                "Tuesday | 6:00 PM - 7:00 PM\n"
+                "Location: Commons Center, Fireside Lounge"
+            ],
+            "Mathematics": [
+                "Monday | 8:00 PM - 9:00 PM\n"
+                "Subjects: CHEM/BSCI/MATH\n"
+                "Location: Commons Center, Fireside Lounge"
+            ],
+            "Physics": [
+                "Tuesday | 7:00 PM - 8:00 PM\n"
+                "Subjects: CHEM/BSCI/PHYS\n"
+                "Location: Commons Center, Fireside Lounge"
+            ],
+            "Economics": [
+                "Economics tutoring is available.\n"
+                "See the Tutoring Center for the current weekly schedule."
+            ],
+            "Neuroscience": [
+                "Neuroscience tutoring is available.\n"
+                "See the Tutoring Center for the current weekly schedule."
+            ]
+        }
+
+        # Create popup
+        top = self._create_popup("University Tutoring Finder", width=650, height=600)
+        top.resizable(False, False)
+
+        # Accent bar
+        tk.Frame(top, bg="#7377FF", height=3).pack(fill="x")
+
+        # Header
+        ui.make_label(top, "University Tutoring Finder", 18, bold=True,
+                      color=self.theme.get_color('accent')).pack(pady=10)
+        ui.make_label(top, "Select Your Major:", 12,
+                      color=self.theme.get_color('text_secondary')).pack()
+
+        # Dropdown
+        major_var = tk.StringVar(value="Chemistry")
+        majors = list(major_tutoring.keys())
+
+        # Style the OptionMenu using theme colors
+        option_menu = tk.OptionMenu(top, major_var, *majors)
+        option_menu.config(
+            bg=self.theme.get_color('card'),
+            fg=self.theme.get_color('text'),
+            activebackground=self.theme.get_color('highlight'),
+            activeforeground=self.theme.get_color('text'),
+            relief="flat",
+            font=('Segoe UI', 11)
+        )
+        option_menu.pack(pady=10)
+
+        # Output text box
+        output = tk.Text(
+            top,
+            height=18,
+            width=75,
+            font=('Segoe UI', 10),
+            bg=self.theme.get_color('card'),
+            fg=self.theme.get_color('text'),
+            relief="flat",
+            padx=10,
+            pady=10
+        )
+        output.pack(padx=10, pady=10)
+
+        def show_tutoring():
+            output.delete("1.0", tk.END)
+            major = major_var.get()
+            if major in major_tutoring:
+                output.insert(tk.END, f"=== {major} Tutoring ===\n\n")
+                for session in major_tutoring[major]:
+                    output.insert(tk.END, session + "\n\n")
+            else:
+                output.insert(tk.END, "No tutoring information available.")
+
+        # Find Tutoring button
+        btn_frame = tk.Frame(top, bg=self.theme.get_color('bg'))
+        btn_frame.pack(pady=10)
+        ui.make_button(btn_frame, "Find Tutoring", show_tutoring,
+                       color="#7377FF", width=200, height=45).pack()
+
+        # Footer close button
+        footer = tk.Frame(top, bg=self.theme.get_color('panel'))
+        footer.pack(fill="x", side="bottom")
+        tk.Frame(footer, bg=self.theme.get_color('border'), height=1).pack(fill="x")
+        btn_frame2 = tk.Frame(footer, bg=self.theme.get_color('panel'))
+        btn_frame2.pack(pady=8)
+        ui.make_button(btn_frame2, "Close", top.destroy,
                        width=120, height=35).pack()

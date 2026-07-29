@@ -30,14 +30,14 @@ class UIManager:
             "GPA Formula", "Swarm Plot", "Major Count Plot",
             "Grade Pie Chart", "Student Profile", "Student ID Card",
             "Queries", "Dean's List", "Statistics Dashboard",
-            "Student Organizations"
+            "Student Organizations", "Tutoring"
         ]
 
         self.OPTION_COLORS = [
             "#C49B5A", "#A8843E", "#8C3A2E", "#B8860B", "#6E1E22",
             "#5C4A2A", "#9C6B30", "#556B2F", "#7C2D12", "#3E3226",
-            "#C49B5A", "#2A6B4A",
-            "#42112C"
+            "#C49B5A", "#2A6B4A", "#42112C", #Student org
+            "#BD9015"  # Tutoring
         ]
 
     def clear_screen(self):
@@ -45,7 +45,6 @@ class UIManager:
         for w in self.root.winfo_children():
             w.destroy()
         self.root.unbind("<Key>")
-        # Unbind global scroll events that might have been set by show_menu
         self.root.unbind_all("<MouseWheel>")
         self.root.unbind_all("<Up>")
         self.root.unbind_all("<Down>")
@@ -371,8 +370,10 @@ class UIManager:
                 tag = "D"
             elif i == 11:
                 tag = "S"
-            else:  # i == 12
+            elif i == 12:
                 tag = "O"
+            else:
+                tag = "T"
 
             border = tk.Frame(grid_frame, bg=color, padx=2, pady=2)
             border.grid(row=r, column=c, padx=10, pady=8)
@@ -399,6 +400,8 @@ class UIManager:
                 self._handle_option(11)
             elif ch.lower() == "o":
                 self._handle_option(12)
+            elif ch.lower() == "t":
+                self._handle_option(13)
         self.root.bind("<Key>", on_key)
 
         # ── Footer ────────────────────────────────────────────────────────────
@@ -422,7 +425,8 @@ class UIManager:
             9: ops.queries,
             10: ops.deans_list,
             11: ops.statistics_dashboard,
-            12: ops.student_organizations
+            12: ops.student_organizations,
+            13: ops.tutoring
         }
         dispatch.get(n, lambda: None)()
 

@@ -67,16 +67,20 @@ class ThemeManager:
         return self.current_palette.get(key, '#000000')
 
     def apply_theme(self, widget):
-        """Apply current theme to a widget and all children."""
-        bg = self.get_color('bg')
+        """Apply current theme to a widget and all of its children."""
+        bg = self.get_color("bg")
 
-        try:
-            widget.configure(bg=bg)
-        except:
-            pass
+        widgets = [widget]
 
-        for child in widget.winfo_children():
-            self.apply_theme(child)
+        while widgets:
+            current = widgets.pop()
+
+            try:
+                current.configure(bg=bg)
+            except:
+                pass
+
+            widgets.extend(current.winfo_children())
 
     def create_styled_widget(self, parent, widget_type, **kwargs):
         """Create a widget with current theme styling."""

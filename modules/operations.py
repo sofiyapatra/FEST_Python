@@ -1080,16 +1080,16 @@ class OperationsManager:
                           width=200, height=45).pack(side="left", padx=8)
 
     def student_organizations(self):
-        """Display the Student Organizations feature."""
+    
         from modules.ui import UIManager
         ui = UIManager(self.root, self.theme, None)
 
-        # Create popup
+        p
         top = self._create_popup("Student Organizations", width=900, height=650)
         top.resizable(True, True)
 
-        # Color for accent
-        accent_color = "#7C3AED"  # or self.theme.get_color('accent') if you prefer
+        
+        accent_color = "#7C3AED"  
 
         # ── Header ──────────────────────────────────────────────────────────────
         tk.Frame(top, bg=accent_color, height=5).pack(fill="x")
